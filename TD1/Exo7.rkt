@@ -1,0 +1,12 @@
+(define fizzbuzz
+  (lambda(a b)
+    (if (< a b)
+        (let ()
+          (define m3 (modulo a 3))
+          (define m5 (modulo a 5))
+          (if (= m3 0) (display "Fizz"))
+          (if (= m5 0) (display "Buzz"))
+          (if (> (* m3 m5) 0) (display a))
+          (display " ")
+          (fizzbuzz (+ a 1) b)))))
+(fizzbuzz 0 20)
