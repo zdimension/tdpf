@@ -1,0 +1,11 @@
+(define milieu
+  (lambda(l)
+    (if (or (null? l) (null? (cdr l)))
+        (list)
+        (cdr (reverse (cdr (reverse l)))))))
+(milieu '(bonjour tout le monde))
+(milieu '(Hello World))
+(milieu '(seul))
+(milieu '(x (y) z))
+(milieu '(a b))
+(milieu '())
