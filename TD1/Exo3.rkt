@@ -2,11 +2,10 @@
   (lambda(a b c)
     (define delta
       (- (* b b) (* 4 a c)))
-    (if (< delta 0)
-        (list)
-        (if (= delta 0)
-            (list (/ (- b) (* 2 a)))
-            (list
+    (cond
+      ((< delta 0) (list))
+      ((= delta 0) (list (/ (- b) (* 2 a))))
+      (else (list
              (/ (- (- b) (sqrt delta)) (* 2 a))
              (/ (+ (- b) (sqrt delta)) (* 2 a)))))))
 (racines 1 2 1)
