@@ -5,5 +5,5 @@
 (define rotation-droite
   (lambda(l)
     (define rev (reverse l))
-    (append (list (car rev)) (reverse (cdr rev)))))
+    (cons (car rev) (reverse (cdr rev)))))
 (rotation-droite '(a b c d))
