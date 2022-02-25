@@ -5,19 +5,21 @@
             lst)
   (newline))
 
-(define depl (lambda (a b) (show "deplacer un disque de" a "vers" b)))
+(define depl (lambda (a b) (begin (show "Déplacer un disque de" a "vers" b) 1)))
 
 (define aux
   (lambda (n from to tmp)
     (if (= n 1)
         (depl from to)
         (begin
-          (aux (- n 1) from tmp to)
-          (depl from to)
-          (aux (- n 1) tmp to from)))))
+          (let ([p1 (aux (- n 1) from tmp to)]
+                [p2 (depl from to)]
+                [p3 (aux (- n 1) tmp to from)])
+          (+ p1 p2 p3))))))
   
 (define hanoi
   (lambda (n)
-    (aux n 'a 'b 'c)))
+    (if (> n 0)
+        (aux n 'a 'b 'c))))
 
 (hanoi 3)
