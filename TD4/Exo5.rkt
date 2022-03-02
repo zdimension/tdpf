@@ -6,6 +6,13 @@
 
 (define (appartient? n ens) (ens n))
 
+; if running under Biwa
+; (define (foldl op lst init)
+;   (cond
+;     ((null? lst) init)
+;     ((list? lst) (foldl op (cdr lst) (op (car lst) init)))
+;     (else (error "bad list" lst))))
+
 (define (union . ens)
   (lambda(x) (foldl (lambda(f res) (or (f x) res)) #f ens)))
 

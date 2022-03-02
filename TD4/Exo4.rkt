@@ -1,9 +1,15 @@
 ; (define (reduce f lst base)
 ;   (foldr f base lst))
 
+; (define (reduce f lst base)
+;   (if (null? lst) base
+;       (f (car lst) (reduce f (cdr lst) base))))
+
 (define (reduce f lst base)
-  (if (null? lst) base
-      (f (car lst) (reduce f (cdr lst) base))))
+  (cond
+    ((null? lst) base)
+    ((list? lst) (f (car lst) (reduce f (cdr lst) base)))
+    (else (error "bad list" lst))))
 
 (reduce * '(1 2 3 4 5) 1)
 (reduce + '(1 2 3 4 5) 0)
