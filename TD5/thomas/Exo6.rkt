@@ -20,8 +20,8 @@
     ,@en
     res))
 
-(define-macro (push! stack x)
-  `(set! ,stack (cons ,x ,stack)))
+(define-macro (push! stack value)
+  `(set! ,stack (cons ,value ,stack)))
 
 (define-macro (pop! stack)
   `(prog1 (car ,stack) (set! ,stack (cdr ,stack))))

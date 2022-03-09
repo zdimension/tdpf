@@ -1,6 +1,6 @@
 (define depth
   (lambda (lst)
-    (if (list? lst)
+    (if (pair? lst)
         (+ 1 (apply max (map depth lst)))
         0)))
 

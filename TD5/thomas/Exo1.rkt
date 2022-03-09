@@ -1,6 +1,8 @@
-(define (create-accumulator n)
-  (let ((val n))
-    (lambda (x) (set! val (+ x val)) val)))
+(define (create-accumulator k)
+  (let ((accu k))
+    (lambda (x)
+      (set! accu (+ x accu))
+      accu)))
 
 (define a (create-accumulator 100)) ; 100 = valeur initiale acc.
 (define b (create-accumulator 0))    ; 0 = valeur initiale acc.

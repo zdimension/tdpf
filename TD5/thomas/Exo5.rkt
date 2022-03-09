@@ -14,20 +14,13 @@
   (pretty-print-columns (if (null? width) 30 (car width)))
   (pretty-print form))
 
-(define-macro (prog1 e1 . en)
+(define-macro (prog1 e1 . rest)
   `(begin
-    (define res ,e1)
-    ,@en
-    res))
+    (define result ,e1)
+    ,@rest
+    result))
 
-(define-macro (push! stack x)
-  `(set! ,stack (cons ,x ,stack)))
-
-(define-macro (pop! stack)
-  `(prog1 (car ,stack) (set! ,stack (cdr ,stack))))
-
-(define p '())
-(push! p 1)
-(push! p 2)
-(pop! p)
-(pop! p)
+(define l '(a b c))
+(pp (macro-expand `(prog1 (car l) (set! l (cdr l)))))
+(prog1 (car l) (set! l (cdr l)))  ;; équivalent à pop
+l

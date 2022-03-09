@@ -9,6 +9,6 @@
 (define (gen-map fct . lsts)
   (cond
     ((null? (car lsts)) (list))
-    (else (append (list (apply fct (map car lsts))) (apply gen-map fct (map cdr lsts))))))
+    (else (append (list (apply fct (simple-map car lsts))) (apply gen-map fct (simple-map cdr lsts))))))
 
 (gen-map + '(1 2 3 4) '(10 100 1000 10000))

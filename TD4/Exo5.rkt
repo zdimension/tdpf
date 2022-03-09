@@ -7,17 +7,17 @@
 (define (appartient? n ens) (ens n))
 
 ; if running under Biwa
-; (define (foldl op lst init)
-;   (cond
-;     ((null? lst) init)
-;     ((list? lst) (foldl op (cdr lst) (op (car lst) init)))
-;     (else (error "bad list" lst))))
+(define (Foldl op init lst)
+  (cond
+    ((null? lst) init)
+    ((list? lst) (Foldl op (op (car lst) init) (cdr lst)))
+    (else (error "bad list" lst))))
 
 (define (union . ens)
-  (lambda(x) (foldl (lambda(f res) (or (f x) res)) #f ens)))
+  (lambda(x) (Foldl (lambda(f res) (or (f x) res)) #f ens)))
 
 (define (intersection . ens)
-  (lambda(x) (foldl (lambda(f res) (and (f x) res)) #t ens)))
+  (lambda(x) (Foldl (lambda(f res) (and (f x) res)) #t ens)))
 
 (define (complementaire ens) (compose not ens))
 

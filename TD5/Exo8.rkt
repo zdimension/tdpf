@@ -14,16 +14,12 @@
   (pretty-print-columns (if (null? width) 30 (car width)))
   (pretty-print form))
 
-(define-macro (case expr . clauses)
-  `(let ((val ,expr))
-     (cond
-       ,@(map (λ (clause)
-                (if (eq? 'else (car clause))
-                    clause
-                    `((memv val ',(car clause)) ,@(cdr clause))))
-              clauses))))
+(define-macro (while expr . corps)
+  `(letrec 
+    ((loop (lambda () (if ,expr (begin ,@corps (loop))))))
+    (loop)))
 
-(case (+ 2 3)
-  ((1 2 3 4) 'petit)
-  ((5 6 7 8) 'moyen)
-  (else      'grand))
+(let ((i 0))
+  (while (< i 5)
+         (print i)
+         (set! i (+ i 1))))
