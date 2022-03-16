@@ -1,16 +1,65 @@
-(define-macro (named-let name bindings body)
-  `(letrec ((,name (lambda ,(map car bindings) body)))
-     (,name ,@(map cadr bindings))))
+(define (simple-trace-function func name)
+  (lambda args
+    (printf "Calling ~a\n" (cons name args))
+    (let ((res (apply func args)))
+      (printf "Result: ~a\n" res)
+      res)))
 
-(define-macro (let head . tail)
-  (if (pair? head)
-      `((lambda ,(map car head) ,@tail) ,@(map cadr head))
-      `(letrec ((,head (lambda ,(map car (car tail)) ,(cadr tail))))
-         (,head ,@(map cadr (car tail))))))
+(define fib (λ (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))
+(set! fib (simple-trace-function fib 'fib))
+(fib 3)
 
-(let Loop ((i 0))
-  (when (< i 10)
-    (display i)
-    (Loop (+ i 1))))
+(define (trace-function func name)
+  (let ((i 0))
+    (lambda args
+      (let ((s (make-string i #\.)))
+        (printf "~a Calling ~a\n" s (cons name args))
+        (set! i (+ i 3))
+        (let ((res (apply func args)))
+          (set! i (- i 3))
+          (printf "~a Result: ~a\n" s res)
+          res)))))
 
-(let ((i 5)) (display i))
+(define fib (λ (n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))
+(set! fib (trace-function fib 'fib))
+(fib 3)
+
+(define-macro (trace func)
+  `(set! ,func (trace-function ,func ',func)))
+
+(define (fact n)
+  (if (<= n 1)
+      1
+      (* n (fact (- n 1)))))
+(trace fact)
+(fact 4)
+
+; avec untrace
+(define $trace$ '())
+(define (trace-function func name)
+  (let ((i 0))
+    (set! $trace$ (cons (cons name func) $trace$))
+    (lambda args
+      (let ((s (make-string i #\.)))
+        (printf "~a Calling ~a\n" s (cons name args))
+        (set! i (+ i 3))
+        (let ((res (apply func args)))
+          (set! i (- i 3))
+          (printf "~a Result: ~a\n" s res)
+          res)))))
+
+(define (untrace-function name)
+  (let ((backup (assoc name $trace$)))
+    (if backup (cdr backup) (error "function was not traced"))))
+
+(define-macro (untrace func)
+  `(set! ,func (untrace-function ',func)))
+
+(define (fact n)
+  (if (<= n 1)
+      1
+      (* n (fact (- n 1)))))
+(trace fact)
+(fact 4)
+(untrace fact)
+(fact 4)

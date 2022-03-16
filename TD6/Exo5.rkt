@@ -1,32 +1,16 @@
-(define (make-hook where hook fct)
-  (case where
-    ((before) (lambda args (apply hook args) (apply fct args)))    ;; 1
-    ((after)  (lambda args (hook (apply fct args))))   ;; 2
-    ((around) (lambda args (apply hook fct args)))    ;; 3
-    (else     (error "WHERE is incorrect"))))
-  
+(define-macro (named-let name bindings body)
+  `(letrec ((,name (lambda ,(map car bindings) ,body)))
+     (,name ,@(map cadr bindings))))
 
-(define my-sqrt (make-hook 'before
-                           (λ (args) (printf "Call sqrt with ~a\n" args))
-                           sqrt))
+(define-macro (let head . tail)
+  (if (pair? head)
+      `((lambda ,(map car head) ,@tail) ,@(map cadr head))
+      `(letrec ((,head (lambda ,(map car (car tail)) ,(cadr tail))))
+         (,head ,@(map cadr (car tail))))))
 
-(my-sqrt 10)
+(let Loop ((i 0))
+  (when (< i 10)
+    (display i)
+    (Loop (+ i 1))))
 
-(define my-sin (make-hook 'after
-                          (λ (res . args) (abs res))
-                          sin))
-(sin (- (/ 3.14156 2)))
-(my-sin (- (/ 3.14156 2)))
-
-(define (fact n)
-  (if (<= n 1)
-      1
-      (* n (fact (- n 1)))))
-(set! fact (make-hook 'around
-                      (λ (fct . args)
-                        (printf "Calling arguments: ~a\n" args)
-                        (let ((res (apply fct args)))
-                          (printf "Résult: ~a\n" res)
-                          res))
-                      fact))
-(fact 4)
+(let ((i 5)) (display i))

@@ -1,16 +1,25 @@
-(define-macro (define-func params body)
-  (let ((fname (car params)) (args (cdr params)))
-    `(define (,fname ,@(map car args))
-       ,@(map (lambda (arg)
-                (if (pair? (cdr arg))
-                    `(unless ,(reverse arg)
-                       (error ,(apply format "incorrect type for ~A (expected ~A)" arg)))))
-              args)
-       ,@body)))
+;; Spécificités DrScheme (plus nécessaire dans les versions récentes)
+(require mzlib/defmacro)
 
-(define-func (puissance (x) (y integer?))
-  (expt x y))
+;; Un macro-expand qui correspond à celui du cours
+(define-macro (macro-expand m)
+  `(syntax-object->datum (expand-once ,m)))
 
-(puissance 2 4)
-(puissance 'a 2)
-(puissance 2 'a)
+;; Un macro-expand "récursif"
+(define-macro (macro-expand* m)
+  `(syntax-object->datum (expand-to-top-form ,m)))
+
+;; Une fonction pretty-print (avec largeur optionnelle)
+(define (pp form . width)
+  (pretty-print-columns (if (null? width) 30 (car width)))
+  (pretty-print form))
+
+(define-macro (bind params values . exprs)
+  `(begin ,@(map (lambda (e) `(apply (lambda ,params ,e) ,values)) exprs)))
+
+(macro-expand '((bind (x y) (get-mouse-coords)
+                      (printf "mouse position: [~s, ~s]\n" x y))))
+
+
+(bind (a b . rest) (list 1 2 3 4 5)
+      (printf "a+b=~s rest=~s\n" (+ a b) rest))
