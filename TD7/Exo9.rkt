@@ -17,6 +17,8 @@
       ()
       (cons-stream (head strm) (stream-firsts (- n 1) (tail strm)))))
 
+(define (ormap fct args)
+  (and (pair? args) (or (fct (car args)) (ormap fct (cdr args)))))
 
 (define (stream-map func . strms)
   (if (ormap null? strms)
