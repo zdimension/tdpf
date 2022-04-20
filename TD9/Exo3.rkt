@@ -1,0 +1,18 @@
+(load "Exo2.rkt")
+
+(let ((eval-old evaluate))
+  (define (breakpoint env)
+    (let Loop ()
+      (display "debug> ")
+      (let ((expr (read)))
+        (unless (eof-object? expr)
+          (let ((res (evaluate expr env)))
+            (unless (eq? res (void))
+              (write res)
+              (newline)))
+          (Loop)))))
+  
+  (set! evaluate (lambda (expr env)
+                   (if (and (pair? expr) (eq? 'break (car expr)))
+                       (breakpoint env)
+                       (eval-old expr env)))))
