@@ -9,7 +9,7 @@
 
 (define (release) (call/cc (lambda(k) (create-thread! k) (scheduler))))
 
-(define (create-thread! th) (set! *threads* (append *threads* (list (lambda () (th 'unused) (release))))))
+(define (create-thread! th) (set! *threads* (append *threads* (list (lambda () (th) (release))))))
 
 (define (scheduler)
   (unless (null? *threads*)
