@@ -33,24 +33,14 @@
                                                  k))))
                       ((lambda) (k (make-closure (cadr expr) (cddr expr) env)))
                       ((macro) (k (make-macro (cadr expr) (cddr expr) env)))
-                      (else     (evaluate-list expr
-                                               env
-                                               (λ (v) (funcall (car v) (cdr v) env k))))))
+                      (else
+                       (evaluate (car expr) env
+                                 (lambda (res)
+                                   (if (macro? res) (macro-expand res (cdr expr) (lambda (mres) (evaluate mres env k)))
+                                       (evaluate-list (cdr expr) env (lambda (res2)
+                                                                       (funcall res res2 env k)))))))))
                    (else
                     (k expr)))))
-
-(set! funcall (lambda func l env k)
-  (cond
-    ((closure? func)
-        (evaluate-compound (closure-body func)
-                           (extend-env (closure-args func)
-                                       l
-                                       (closure-env func))
-                           k))
-    ((kontinuation? func)
-        (apply (continuation-value func) l))
-    (else
-        (k (apply func l)))))
 
 
 (init-interpreter)
