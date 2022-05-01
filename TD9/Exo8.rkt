@@ -45,6 +45,15 @@
                    (else
                     (k expr)))))
 
+; ou bien:
+;(set-binding! 'with-return
+;              (make-macro '(e1 . en)
+;                          '((list 'call/cc (cons 'lambda (cons '(return) (cons e1 en)))))
+;                          *global-env*)
+;              *global-env*
+;              #f)
+
+
 (init-interpreter)
 (evaluate '(with-return
                (print "Hello")
